@@ -21,17 +21,18 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
     ListView mobile_list;
     ExampleDBHelper mydb;
-    ArrayList<HashMap<String, String>> dataList = new ArrayList<HashMap<String, String>>();
+    ArrayList<HashMap<String, String>> dataList = new ArrayList<>();
     public static final String INPUT_COLUMN_ID = "_id";
     public static final String INPUT_COLUMN_Title = "title";
     public static final String INPUT_COLUMN_Text = "text";
+    public static final String INPUT_COLUMN_Image = "image";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mydb = new ExampleDBHelper(getApplicationContext());
-        mobile_list = (ListView) findViewById(R.id.mobile_list);
+        mobile_list = findViewById(R.id.mobile_list);
         loadData();
     }
 
@@ -53,12 +54,17 @@ public class MainActivity extends AppCompatActivity {
         dataList.clear();
         Cursor cursor = mydb.getAllPersons();
         if (cursor.moveToFirst()) {
-            while (cursor.isAfterLast() == false) {
+            while (!cursor.isAfterLast()) {
 
-                HashMap<String, String> map = new HashMap<String, String>();
-                map.put(INPUT_COLUMN_ID, cursor.getString(cursor.getColumnIndex(INPUT_COLUMN_ID)));
-                map.put(INPUT_COLUMN_Title, cursor.getString(cursor.getColumnIndex(INPUT_COLUMN_Title)));
-                map.put(INPUT_COLUMN_Text, cursor.getString(cursor.getColumnIndex(INPUT_COLUMN_Text)));
+                HashMap<String, String> map = new HashMap<>();
+                map.put(INPUT_COLUMN_ID,
+                        cursor.getString(cursor.getColumnIndex(INPUT_COLUMN_ID)));
+                map.put(INPUT_COLUMN_Title,
+                        cursor.getString(cursor.getColumnIndex(INPUT_COLUMN_Title)));
+                map.put(INPUT_COLUMN_Text,
+                        cursor.getString(cursor.getColumnIndex(INPUT_COLUMN_Text)));
+                map.put(INPUT_COLUMN_Image,
+                        cursor.getString(cursor.getColumnIndex(INPUT_COLUMN_Image)));
 
 
                 dataList.add(map);
@@ -79,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 i.putExtra("id", dataList.get(+position).get(INPUT_COLUMN_ID));
                 i.putExtra("title", dataList.get(+position).get(INPUT_COLUMN_Title));
                 i.putExtra("text", dataList.get(+position).get(INPUT_COLUMN_Text));
+                i.putExtra("image", dataList.get(+position).get(INPUT_COLUMN_Image));
                 startActivity(i);
 
             }
@@ -148,8 +155,8 @@ class NoticeAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(activity).inflate(
                     R.layout.activity_listview, null);
 
-            holder.title = (TextView) convertView.findViewById(R.id.list_title);
-            holder.text = (TextView) convertView.findViewById(R.id.list_text);
+            holder.title = convertView.findViewById(R.id.list_title);
+            holder.text = convertView.findViewById(R.id.list_text);
 
             convertView.setTag(holder);
         } else {

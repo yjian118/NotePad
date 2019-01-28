@@ -43,6 +43,7 @@ public class Input_Text_Activity extends AppCompatActivity {
     private ImageView imageview;
     private static final String IMAGE_DIRECTORY = "/demonuts";
     private int GALLERY = 1, CAMERA = 2;
+    private String imageStorage;
 
     public static SharedPreferences pref;
 
@@ -57,11 +58,11 @@ public class Input_Text_Activity extends AppCompatActivity {
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
 
 
-        n_title=(EditText) findViewById(R.id.title);
-        n_text=(EditText) findViewById(R.id.text);
+        n_title= findViewById(R.id.title);
+        n_text= findViewById(R.id.text);
 
-        btn = (Button) findViewById(R.id.btn);
-        imageview = (ImageView) findViewById(R.id.iv);
+        btn = findViewById(R.id.btn);
+        imageview = findViewById(R.id.iv);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +71,7 @@ public class Input_Text_Activity extends AppCompatActivity {
             }
         });
 
-        Button clickButton = (Button) findViewById(R.id.clickButton);
+        Button clickButton = findViewById(R.id.clickButton);
         clickButton.setOnClickListener( new View.OnClickListener() {
 
             @Override
@@ -85,7 +86,7 @@ public class Input_Text_Activity extends AppCompatActivity {
                     idName++;
                     title="new document "+idName ;
                     editor.putInt("name",idName);
-                    editor.commit();
+                    editor.apply();
 
                 }
 
@@ -95,7 +96,7 @@ public class Input_Text_Activity extends AppCompatActivity {
                 }
                 else
                 {
-                    db.insertPerson(title,text);
+                    db.insertPerson(title,text,imageStorage);
                     Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG).show();
                     finish();}
             }
@@ -128,7 +129,6 @@ public class Input_Text_Activity extends AppCompatActivity {
     public void choosePhotoFromGallary() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
         startActivityForResult(galleryIntent, GALLERY);
     }
 
@@ -138,7 +138,7 @@ public class Input_Text_Activity extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == this.RESULT_CANCELED) {
@@ -148,22 +148,25 @@ public class Input_Text_Activity extends AppCompatActivity {
             if (data != null) {
                 Uri contentURI = data.getData();
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    String path = saveImage(bitmap);
-                    Toast.makeText(Input_Text_Activity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
+                            contentURI);
+                    imageStorage = saveImage(bitmap);
+                    Toast.makeText(Input_Text_Activity.this, "Image Saved!",
+                            Toast.LENGTH_SHORT).show();
                     imageview.setImageBitmap(bitmap);
-
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(Input_Text_Activity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Input_Text_Activity.this, "Failed!",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 
         } else if (requestCode == CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             imageview.setImageBitmap(thumbnail);
-            saveImage(thumbnail);
-            Toast.makeText(Input_Text_Activity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+            imageStorage = saveImage(thumbnail);
+            Toast.makeText(Input_Text_Activity.this, "Image Saved!",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -187,8 +190,7 @@ public class Input_Text_Activity extends AppCompatActivity {
                     new String[]{f.getPath()},
                     new String[]{"image/jpeg"}, null);
             fo.close();
-            Log.d("TAG", "File Saved::---&gt;" + f.getAbsolutePath());
-
+            Log.d("TAG", "File Saved::--->"  + f.getAbsolutePath());
             return f.getAbsolutePath();
         } catch (IOException e1) {
             e1.printStackTrace();

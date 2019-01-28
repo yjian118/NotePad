@@ -14,6 +14,7 @@ public class ExampleDBHelper extends SQLiteOpenHelper {
     public static final String INPUT_COLUMN_ID = "_id";
     public static final String INPUT_COLUMN_Title = "title";
     public static final String INPUT_COLUMN_Text = "text";
+    public static final String INPUT_COLUMN_Image = "image";
 
     public ExampleDBHelper(Context context) {
         super(context, DATABASE_NAME , null, DATABASE_VERSION);
@@ -24,7 +25,8 @@ public class ExampleDBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + INPUT_TABLE_NAME + "(" +
                 INPUT_COLUMN_ID + " INTEGER PRIMARY KEY, " +
                 INPUT_COLUMN_Title + " TEXT, " +
-                INPUT_COLUMN_Text + " TEXT )"
+                INPUT_COLUMN_Text + " TEXT,"+
+                INPUT_COLUMN_Image +" TEXT)"
         );
     }
 
@@ -38,11 +40,12 @@ public class ExampleDBHelper extends SQLiteOpenHelper {
 
 
 
-    public boolean insertPerson(String title,String text) {
+    public boolean insertPerson(String title,String text,String imageStorage) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(INPUT_COLUMN_Title, title);
         contentValues.put(INPUT_COLUMN_Text, text);
+        contentValues.put(INPUT_COLUMN_Image, imageStorage);
         db.insert(INPUT_TABLE_NAME, null, contentValues);
         return true;
     }
