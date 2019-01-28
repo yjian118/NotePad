@@ -5,8 +5,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,10 +50,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
+//  Load all the Record from database
     public void loadData() {
         dataList.clear();
-        Cursor cursor = mydb.getAllPersons();
+        Cursor cursor = mydb.getAllRecord();
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
 
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         NoticeAdapter adapter = new NoticeAdapter(MainActivity.this, dataList);
         mobile_list.setAdapter(adapter);
 
+        // Show the selected record in new activity
         mobile_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        //  list item long press to delete -------------start-----------
+        //  One record that long pressed to be deleted
 
         mobile_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                 alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String a=dataList.get(+pos).get(INPUT_COLUMN_ID);
-                        mydb.deleteSingleContact(a);
+                        mydb.deleteSingleRecord(a);
                         loadData();
                     }
                 });
@@ -117,10 +119,10 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }});
 
-        //--------finish------------
     }
 }
 
+//  Create an Adapter to present the list of records
 class NoticeAdapter extends BaseAdapter {
 
     private Activity activity;

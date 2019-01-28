@@ -52,6 +52,9 @@ public class Input_Text_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_text);
 
+        // request permissions including camera, read/write in file system
+        // the permission request are imported from AndroidManifest
+        // A dependencies should be added in build.gradle(Module:app)
         requestMultiplePermissions();
 
         db=new ExampleDBHelper(getApplicationContext());
@@ -64,6 +67,8 @@ public class Input_Text_Activity extends AppCompatActivity {
         btn = findViewById(R.id.btn);
         imageview = findViewById(R.id.iv);
 
+        // colick button to start a dialog for users to choose the method
+        // import from gallery or take new photo with camera
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,7 +101,7 @@ public class Input_Text_Activity extends AppCompatActivity {
                 }
                 else
                 {
-                    db.insertPerson(title,text,imageStorage);
+                    db.insertRecord(title,text,imageStorage);
                     Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG).show();
                     finish();}
             }
@@ -126,12 +131,13 @@ public class Input_Text_Activity extends AppCompatActivity {
         pictureDialog.show();
     }
 
+    // Use  activity of launch image content storage
     public void choosePhotoFromGallary() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, GALLERY);
     }
-
+    // Capture image with camera
     private void takePhotoFromCamera() {
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, CAMERA);
@@ -141,7 +147,7 @@ public class Input_Text_Activity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == this.RESULT_CANCELED) {
+        if (resultCode == this.RESULT_CANCELED) { // return to the input text activity
             return;
         }
         if (requestCode == GALLERY) {
@@ -150,10 +156,10 @@ public class Input_Text_Activity extends AppCompatActivity {
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
                             contentURI);
-                    imageStorage = saveImage(bitmap);
+                    imageStorage = saveImage(bitmap); //get the path with image name
                     Toast.makeText(Input_Text_Activity.this, "Image Saved!",
-                            Toast.LENGTH_SHORT).show();
-                    imageview.setImageBitmap(bitmap);
+                            Toast.LENGTH_SHORT).show(); // toast a short message after success
+                    imageview.setImageBitmap(bitmap); // show the image
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(Input_Text_Activity.this, "Failed!",
@@ -163,8 +169,8 @@ public class Input_Text_Activity extends AppCompatActivity {
 
         } else if (requestCode == CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            imageview.setImageBitmap(thumbnail);
-            imageStorage = saveImage(thumbnail);
+            imageview.setImageBitmap(thumbnail); // show the image
+            imageStorage = saveImage(thumbnail); // get the path with image name
             Toast.makeText(Input_Text_Activity.this, "Image Saved!",
                     Toast.LENGTH_SHORT).show();
         }
@@ -172,6 +178,7 @@ public class Input_Text_Activity extends AppCompatActivity {
 
     public String saveImage(Bitmap myBitmap) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        // First thing is compress the image to lower size
         myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
         File wallpaperDirectory = new File(
                 Environment.getExternalStorageDirectory() + IMAGE_DIRECTORY);
@@ -209,7 +216,9 @@ public class Input_Text_Activity extends AppCompatActivity {
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted()) {
-                            Toast.makeText(getApplicationContext(), "All permissions are granted by user!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),
+                                    "All permissions are granted by user!",
+                                    Toast.LENGTH_SHORT).show();
                         }
 
                         // check for permanent denial of any permission
@@ -220,14 +229,17 @@ public class Input_Text_Activity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                    public void onPermissionRationaleShouldBeShown(
+                            List<PermissionRequest> permissions, PermissionToken token) {
                         token.continuePermissionRequest();
                     }
                 }).
                 withErrorListener(new PermissionRequestErrorListener() {
                     @Override
                     public void onError(DexterError error) {
-                        Toast.makeText(getApplicationContext(), "Some Error! ", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),
+                                "Do not have the permission,please check the settings",
+                                Toast.LENGTH_SHORT).show();
                     }
                 })
                 .onSameThread()

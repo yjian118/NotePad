@@ -1,19 +1,11 @@
 package com.example.notepad;
 
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.Manifest;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 
 public class NoteViewActivity extends AppCompatActivity {
@@ -22,7 +14,6 @@ public class NoteViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_view);
-        ExampleDBHelper mydb;
 
         TextView titleview=(TextView)findViewById(R.id.title_view);
         TextView textview=(TextView)findViewById(R.id.text_view);
@@ -36,11 +27,12 @@ public class NoteViewActivity extends AppCompatActivity {
         titleview.setText(title);
         textview.setText(text);
 
+        // this function only works for image saved in db as bitmap
         /*mydb = new ExampleDBHelper(getApplicationContext());
         Cursor cursor = mydb.getPerson(sub_id);
         String imagePath = cursor.getString(cursor.getColumnIndex("image"));*/
 
-
+        // show image from the its path
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
         iv2.setImageBitmap(bitmap);
     }
