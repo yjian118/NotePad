@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -63,9 +64,19 @@ public class Input_Text_Activity extends AppCompatActivity {
 
         n_title= findViewById(R.id.title);
         n_text= findViewById(R.id.text);
-
         btn = findViewById(R.id.btn);
         imageview = findViewById(R.id.iv);
+
+        final String sub_id=getIntent().getStringExtra("id");
+        String formertitle=getIntent().getStringExtra("title");
+        String formertext=getIntent().getStringExtra("text");
+        String imagePath=getIntent().getStringExtra("image");
+        n_title.setText(formertitle);
+        n_text.setText(formertext);
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+        imageview.setImageBitmap(bitmap);
+
+
 
         // colick button to start a dialog for users to choose the method
         // import from gallery or take new photo with camera
@@ -102,6 +113,7 @@ public class Input_Text_Activity extends AppCompatActivity {
                 else
                 {
                     db.insertRecord(title,text,imageStorage);
+                    db.deleteSingleRecord(sub_id);
                     Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG).show();
                     finish();}
             }

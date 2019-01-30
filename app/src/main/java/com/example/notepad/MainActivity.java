@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Intent i = new Intent(MainActivity.this, NoteViewActivity.class);
+                Intent i = new Intent(MainActivity.this, Input_Text_Activity.class);
                 i.putExtra("id", dataList.get(+position).get(INPUT_COLUMN_ID));
                 i.putExtra("title", dataList.get(+position).get(INPUT_COLUMN_Title));
                 i.putExtra("text", dataList.get(+position).get(INPUT_COLUMN_Text));
